@@ -1,0 +1,11 @@
+{
+  "schema": "glaciereq.promotion-authority-grant.v1",
+  "repository": "GlacierEQ/replit-workspace-cap-matrix",
+  "source_sha": "803e02966e7c252eb690578e9d4070d8380a8c9854c3d76dad1be13c60372cb0",
+  "proof_receipt_digest": "2713ebb63a37bfd36a4af69491133c13748d1961c93faa74f433d8dc0564a223",
+  "not_after": 1788948689.6005619,
+  "mac": "4d5157d959be0894c51b66b15bf68e60d46d46873cc1a39b19cd397d9414382c",
+  "issuer": "local_operator_promotion_authority",
+  "verified": true,
+  "secret_ref": "src/promotion_authority.py::LOCAL_OPERATOR_SECRET"
+}

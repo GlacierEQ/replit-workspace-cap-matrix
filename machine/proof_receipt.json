@@ -1,0 +1,31 @@
+{
+  "schema": "glaciereq.proof-receipt.v1",
+  "repository": "GlacierEQ/replit-workspace-cap-matrix",
+  "source_sha": "803e02966e7c252eb690578e9d4070d8380a8c9854c3d76dad1be13c60372cb0",
+  "proof_id": "elite-replit-workspace-cap-matrix-1786356689",
+  "environment": {
+    "python": "/Users/kcbflux/.local/bin/python3.11",
+    "PYTHONPATH": "/Users/kcbflux/GlacierEQ_Swarm/job-app/repos/replit-workspace-cap-matrix:/Users/kcbflux/GlacierEQ_Swarm/job-app/repos/replit-workspace-cap-matrix/src",
+    "entry": "unittest"
+  },
+  "tests": [
+    "/Users/kcbflux/.local/bin/python3.11 -m unittest discover -s tests -v (x2)"
+  ],
+  "adversarial_tests": [
+    "tests/test_adversarial.py"
+  ],
+  "runtime": {
+    "operate": "scripts/operate.py (x2)",
+    "dual_run_ok": true,
+    "proof_dual_run_ok": true
+  },
+  "result": "PASS",
+  "limitations": [
+    "not production deployed",
+    "reference implementation only"
+  ],
+  "timestamp": "2026-08-10T10:11Z",
+  "artifact_hashes": {
+    "operability_receipt": "f30da379c34e5d83c9c8321d2b6b1990bfefa5f7954bb9ac2decd854b5a46edf"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "glaciereq.repo-capabilities.v1",
+  "repository": "GlacierEQ/replit-workspace-cap-matrix",
+  "capabilities": [
+    {
+      "id": "workspace-cap-matrix",
+      "name": "Workspace Cap Matrix",
+      "status": "SCAFFOLD",
+      "module": "src/workspace_cap_matrix.py"
+    }
+  ]
+}
