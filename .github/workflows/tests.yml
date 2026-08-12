@@ -11,5 +11,18 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - run: python -m pip install --no-build-isolation .
       - run: python -m pytest -q
       - run: python scripts/operate.py
+      - name: installed CLI allow and deny smoke
+        run: |
+          cat > /tmp/allow.json <<'JSON'
+          {"grants":[{"grant_id":"g","subject_id":"agent","capability":"file.read","scopes":["/workspace/src"],"max_cost":0.5}],"request":{"subject_id":"agent","budget":0.5,"payload":{"action":{"capability":"file.read","resource":"/workspace/src/app.py","cost":0.1}}}}
+          JSON
+          workspace-cap-matrix --input /tmp/allow.json > /tmp/allow.out
+          python -c 'import json; d=json.load(open("/tmp/allow.out")); assert d["decision"] == "ALLOW"; assert d["result"]["grant"]["grant_id"] == "g"'
+          cat > /tmp/deny.json <<'JSON'
+          {"grants":[{"grant_id":"g","subject_id":"agent","capability":"file.read","scopes":["/workspace/src"],"max_cost":0.5}],"request":{"subject_id":"agent","budget":0.5,"payload":{"action":{"capability":"file.read","resource":"/workspace/src/../../etc/passwd","cost":0.1}}}}
+          JSON
+          if workspace-cap-matrix --input /tmp/deny.json > /tmp/deny.out; then exit 1; fi
+          python -c 'import json; d=json.load(open("/tmp/deny.out")); assert d["decision"] == "REFUSE"'
