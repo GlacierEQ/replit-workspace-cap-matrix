@@ -1,10 +1,21 @@
+[build-system]
+requires=["setuptools>=68"]
+build-backend="setuptools.build_meta"
+
 [project]
-name = "replit-workspace-cap-matrix"
-version = "0.0.1"
-description = "Scaffold: Workspace Cap Matrix (independent Replit lens)"
-requires-python = ">=3.11"
-dependencies = []
+name="replit-workspace-cap-matrix"
+version="1.0.0"
+description="Revocable, expiring, budgeted workspace capability matrix"
+requires-python=">=3.11"
+dependencies=[]
+
+[project.scripts]
+workspace-cap-matrix="workspace_cap_cli:main"
+
+[tool.setuptools]
+py-modules=["workspace_cap_matrix","workspace_cap_cli","promotion_authority"]
+package-dir={""="src"}
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
+testpaths=["tests"]
+pythonpath=["src"]
