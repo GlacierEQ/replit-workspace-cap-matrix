@@ -1,4 +1,16 @@
-"""Workspace Cap Matrix — independent GlacierEQ scaffold."""
-from .workspace_cap_matrix import WorkspaceCapMatrix
+"""Workspace capability enforcement runtime."""
+from .workspace_cap_matrix import (
+    CapabilityGrant,
+    Decision,
+    WorkspaceCapMatrix,
+    WorkspaceCapMatrixReceipt,
+    WorkspaceCapMatrixRequest,
+)
 
-__all__ = ["WorkspaceCapMatrix"]
+__all__ = [
+    "CapabilityGrant",
+    "Decision",
+    "WorkspaceCapMatrix",
+    "WorkspaceCapMatrixReceipt",
+    "WorkspaceCapMatrixRequest",
+]
