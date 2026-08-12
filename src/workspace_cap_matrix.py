@@ -138,7 +138,13 @@ class WorkspaceCapMatrix:
             seen.add(grant.grant_id)
             parsed.append(grant)
         self._grants = tuple(sorted(parsed, key=lambda grant: grant.grant_id))
-        self._revoked = {str(grant_id) for grant_id in revoked}
+        if isinstance(revoked, (str, bytes, bytearray)):
+            raise ValueError("revoked_ids_invalid")
+        self._revoked = {
+            normalized
+            for grant_id in revoked
+            if (normalized := str(grant_id).strip())
+        }
         self._clock = clock or time.time
 
     def revoke(self, grant_id: str) -> bool:
@@ -192,8 +198,6 @@ class WorkspaceCapMatrix:
                 return target.rsplit(":", 1)[0] == pattern[:-2]
             return False
 
-        # shell.exec and generic capabilities deliberately require an exact
-        # resource match. Callers can grant multiple executables/resources.
         return resource == scope
 
     @staticmethod
@@ -367,16 +371,22 @@ def cli(argv: Sequence[str] | None = None) -> int:
         data = json.loads(raw)
         if not isinstance(data, Mapping):
             raise ValueError("input JSON must be an object")
-        matrix = WorkspaceCapMatrix(
-            grants=data.get("grants") or (),
-            revoked=data.get("revoked") or (),
-        )
+        grants_raw = data.get("grants", [])
+        revoked_raw = data.get("revoked", [])
+        if not isinstance(grants_raw, list):
+            raise ValueError("grants must be an array")
+        if not isinstance(revoked_raw, list) or any(not isinstance(item, str) for item in revoked_raw):
+            raise ValueError("revoked must be an array of strings")
+        matrix = WorkspaceCapMatrix(grants=grants_raw, revoked=revoked_raw)
         request_raw = data.get("request") or {}
         if not isinstance(request_raw, Mapping):
             raise ValueError("request must be an object")
+        payload_raw = request_raw.get("payload", {})
+        if not isinstance(payload_raw, Mapping):
+            raise ValueError("request payload must be an object")
         request = WorkspaceCapMatrixRequest(
             subject_id=str(request_raw.get("subject_id", "")),
-            payload=dict(request_raw.get("payload") or {}),
+            payload=dict(payload_raw),
             budget=request_raw.get("budget", 1.0),
             grant_id=request_raw.get("grant_id"),
             not_after=request_raw.get("not_after"),
