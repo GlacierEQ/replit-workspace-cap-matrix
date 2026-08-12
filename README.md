@@ -1,50 +1,86 @@
 # Workspace Cap Matrix
 
-Independent GlacierEQ portfolio exhibit aligned to **Replit** operating themes.
+A vendor-neutral authorization kernel for agentic coding workspaces.
 
-> **Not affiliated.** This repository is not affiliated with, endorsed by, employed by, or deployed at Replit.
-> No proprietary access, production deployment, customer impact, or company partnership is claimed.
+> Independent GlacierEQ implementation. Not affiliated with, endorsed by, employed by, or deployed at Replit.
 
-## Bottleneck (GlacierEQ hypothesis)
+## Purpose
 
-Agentic coding workspaces need capability bounds for shell/network/file authority.
+Workspace agents routinely cross high-impact boundaries: reading and writing files, starting processes, and opening network connections. Those actions should be authorized by explicit, inspectable capabilities rather than by ambient workspace access.
 
-**Brick wall:** Silent success without receipts; affiliation or production claims without evidence.
+Workspace Cap Matrix turns grants into deterministic authorization receipts before an executor performs the action.
 
-**Observed public pressure (snapshot hypothesis):** Public market pressure toward AI-enabled products and operators (hypothesis only).
+## Capabilities
 
-## Innovation mechanism
+- subject-bound capability grants
+- scoped filesystem authorization with normalized absolute paths
+- path traversal containment
+- exact executable authorization for `shell.exec`
+- exact host/port, wildcard subdomain, and host-any-port scopes for `net.connect`
+- per-request and per-grant action-cost ceilings
+- grant expiry
+- immediate runtime revocation
+- optional explicit grant selection
+- deterministic least-privilege grant selection when multiple grants match
+- active-capability inspection for a subject
+- deterministic authorization receipts suitable for audit logs
+- unknown request/action fields fail closed
+- batch evaluation for callers planning multiple workspace actions
 
-**Workspace Cap Matrix** — Dispatch workspace actions only through a capability matrix with budget and revoke.
+The library **authorizes declared actions but does not execute them**. Filesystem, shell, and network executors remain separate so authorization can sit directly in front of real runtime machinery without smuggling execution side effects into the policy kernel.
 
-## Target roles
+## Install
 
-- Applied AI Systems Engineer
-- Forward-Deployed Engineer
+```bash
+python -m pip install .
+```
 
-## Application move
+## CLI
 
-Lead with a small, inspectable Workspace Cap Matrix exhibit and explicit non-affiliation boundary.
+Input JSON contains `grants`, optional `revoked`, and one `request`:
 
-## Current scaffold state
+```json
+{
+  "grants": [
+    {
+      "grant_id": "source-read",
+      "subject_id": "agent-1",
+      "capability": "file.read",
+      "scopes": ["/workspace/src"],
+      "max_cost": 0.5
+    }
+  ],
+  "request": {
+    "subject_id": "agent-1",
+    "budget": 0.5,
+    "payload": {
+      "action": {
+        "capability": "file.read",
+        "resource": "/workspace/src/app.py",
+        "cost": 0.1
+      }
+    }
+  }
+}
+```
 
-This leaf is a **scaffold**: contracts, tests, and a stub mechanism exist so another engineer/AI can fill production-grade code without inventing company affiliation.
+Run it:
 
-| Surface | Path |
-|---------|------|
-| Mechanism stub | `src/workspace_cap_matrix.py` |
-| Operate entry | `scripts/operate.py` |
-| Contract tests | `tests/` |
-| Target contract | `machine/target-contract.json` |
-| **AI fill-in brief** | **`DEV_UP_INSTRUCTIONS.md`** |
-| Issue contract | `ISSUE_CONTRACT.md` |
+```bash
+workspace-cap-matrix --input request.json
+```
 
-## Non-claims
+Exit code is zero only for an allowed action.
 
-- No Replit employment, endorsement, proprietary data, or production use
-- No customer, revenue, latency, or scale claims without separate receipts
-- Scaffold tests define **intended behavior**, not verified production excellence
+## Verify the repository
 
-## Next gate
+```bash
+python -m pytest -q
+python scripts/operate.py
+```
 
-Implement mechanism + positive tests + operate receipt.
+The runtime smoke proves an allowed scoped read, refusal of a normalized path escape, an allowed shell capability, and refusal immediately after revocation.
+
+## Integration boundary
+
+A real workspace executor should call `WorkspaceCapMatrix.evaluate()` immediately before the corresponding file, process, or network operation and persist the returned receipt with the executor result. This repository owns authorization semantics, not pretend integrations or provider credentials.
