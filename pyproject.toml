@@ -4,8 +4,8 @@ build-backend="setuptools.build_meta"
 
 [project]
 name="replit-workspace-cap-matrix"
-version="1.0.0"
-description="Revocable, expiring, budgeted workspace capability matrix"
+version="1.1.0"
+description="Revocable, expiring, budgeted workspace capability authority and state-transition engine"
 requires-python=">=3.11"
 dependencies=[]
 
@@ -13,7 +13,7 @@ dependencies=[]
 workspace-cap-matrix="workspace_cap_cli:main"
 
 [tool.setuptools]
-py-modules=["workspace_cap_matrix","workspace_cap_cli","promotion_authority"]
+py-modules=["workspace_cap_matrix","workspace_cap_cli"]
 package-dir={""="src"}
 
 [tool.pytest.ini_options]
