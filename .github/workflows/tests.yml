@@ -16,4 +16,12 @@ jobs:
       - run: python -m pip install build
       - run: python -m build
       - run: python -m pip install dist/*.whl
-      - run: workspace-cap-matrix
+      - name: installed CLI demo
+        run: workspace-cap-matrix
+      - name: installed CLI traversal refusal
+        run: |
+          cat > /tmp/deny.json <<'JSON'
+          {"mode":"dispatch","now":100.0,"grants":[{"grant_id":"g1","workspace_id":"ws1","principal_id":"agent1","capability":"file.write","resource_patterns":["src/**"],"max_units":10.0,"used_units":0.0,"epoch":1,"expires_at":200.0,"revoked":false}],"action":{"action_id":"a1","workspace_id":"ws1","principal_id":"agent1","capability":"file.write","resource":"src/../secret.txt","cost_units":1.0,"required_epoch":1}}
+          JSON
+          if workspace-cap-matrix --input /tmp/deny.json --subject ci --budget 10 > /tmp/deny.out; then exit 1; fi
+          python -c 'import json; d=json.load(open("/tmp/deny.out")); assert d["decision"] == "REFUSE"; assert "action_resource_invalid" in d["reasons"]'
