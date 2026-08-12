@@ -1,50 +1,50 @@
 # Workspace Cap Matrix
 
-Independent GlacierEQ portfolio exhibit aligned to **Replit** operating themes.
+Independent GlacierEQ portfolio implementation aligned to **Replit** operating themes.
 
-> **Not affiliated.** This repository is not affiliated with, endorsed by, employed by, or deployed at Replit.
-> No proprietary access, production deployment, customer impact, or company partnership is claimed.
+> **Not affiliated.** This repository is not affiliated with, endorsed by, employed by, or deployed at Replit. No proprietary access, production deployment, customer impact, or company partnership is claimed.
 
-## Bottleneck (GlacierEQ hypothesis)
+## Purpose
 
-Agentic coding workspaces need capability bounds for shell/network/file authority.
+Give agentic coding workspaces explicit authority boundaries for shell, file, network, process, and secret operations instead of treating workspace access as one giant yes/no permission.
 
-**Brick wall:** Silent success without receipts; affiliation or production claims without evidence.
+## Implemented mechanism
 
-**Observed public pressure (snapshot hypothesis):** Public market pressure toward AI-enabled products and operators (hypothesis only).
+`WorkspaceCapMatrix` evaluates actions against revocable, expiring capability grants bound to:
 
-## Innovation mechanism
+- workspace and principal identity;
+- exact capability class;
+- glob-scoped resources;
+- usage budget;
+- grant epoch;
+- expiry and revocation state.
 
-**Workspace Cap Matrix** — Dispatch workspace actions only through a capability matrix with budget and revoke.
+Dispatch fails closed on scope mismatch, capability mismatch, stale epoch, revoked/expired grants, out-of-scope resources, and budget exhaustion. Revocation increments the grant epoch and emits a new deterministic matrix digest so stale callers cannot continue using the old authority view.
 
-## Target roles
+## Run
 
-- Applied AI Systems Engineer
-- Forward-Deployed Engineer
+```bash
+python -m pytest -q
+python scripts/operate.py
+```
 
-## Application move
+Build/install:
 
-Lead with a small, inspectable Workspace Cap Matrix exhibit and explicit non-affiliation boundary.
+```bash
+python -m pip install build
+python -m build
+python -m pip install dist/*.whl
+workspace-cap-matrix
+```
 
-## Current scaffold state
+## Proof surface
 
-This leaf is a **scaffold**: contracts, tests, and a stub mechanism exist so another engineer/AI can fill production-grade code without inventing company affiliation.
+- `src/workspace_cap_matrix.py` — dispatch/revoke authority engine
+- `src/workspace_cap_cli.py` — installable execution surface
+- `tests/test_workspace_cap_matrix.py` — resource, budget, expiry, epoch, revocation and secret-scope behavior
+- `.github/workflows/tests.yml` — tests + cold-start + wheel build/install + installed CLI
+- `machine/` — existing Helix control-plane/promotion surfaces remain preserved
 
-| Surface | Path |
-|---------|------|
-| Mechanism stub | `src/workspace_cap_matrix.py` |
-| Operate entry | `scripts/operate.py` |
-| Contract tests | `tests/` |
-| Target contract | `machine/target-contract.json` |
-| **AI fill-in brief** | **`DEV_UP_INSTRUCTIONS.md`** |
-| Issue contract | `ISSUE_CONTRACT.md` |
+## Current boundary
 
-## Non-claims
-
-- No Replit employment, endorsement, proprietary data, or production use
-- No customer, revenue, latency, or scale claims without separate receipts
-- Scaffold tests define **intended behavior**, not verified production excellence
-
-## Next gate
-
-Implement mechanism + positive tests + operate receipt.
+This is a vendor-neutral capability engine over normalized workspace actions. It does not control Replit infrastructure. A further deployment step is an adapter that intercepts real tool calls and persists grant usage/epoch updates across a disposable workspace runtime.
